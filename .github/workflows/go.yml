@@ -25,4 +25,4 @@ jobs:
       run: go build -v ./...
 
     - name: Test
-      run: ghost --help
+      run: ./ghost --help
