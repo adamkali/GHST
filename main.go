@@ -9,7 +9,7 @@ import (
 );
 
 const (
-    VERSION = "0.0.1"
+    VERSION = "0.0.2"
     GHSTASCII = `
         ,.,
      /"    "\
@@ -30,9 +30,6 @@ func main() {
     var modelPathInput string;
 
 
-    flag.BoolVar(&noconfirm, "C", false, "no confirmation");
-    flag.BoolVar(&noconfirm, "noconfirm", false, "no confirmation");
-
     // make a new flag set 
     newFlagSet := flag.NewFlagSet("new", flag.ExitOnError);    
     modelFlagSet := flag.NewFlagSet("model", flag.ExitOnError);
@@ -50,6 +47,8 @@ func main() {
     //newFlagSet.StringVar(&projectName, "name", "", "project name");
     newFlagSet.StringVar(&projectPath, "p", "", "project path");
     newFlagSet.StringVar(&projectPath, "path", "", "project path");
+    newFlagSet.BoolVar(&noconfirm, "y", false, "no confirmation");
+    newFlagSet.BoolVar(&noconfirm, "noconfirm", false, "no confirmation");
 
     // model subcommand
     modelFlagSet.Usage = func() {
@@ -76,6 +75,8 @@ func main() {
     modelFlagSet.StringVar(&modelName, "name", "", "model name");
     modelFlagSet.StringVar(&modelPathInput, "p", "", "model path");
     modelFlagSet.StringVar(&modelPathInput, "path", "", "model path");
+    modelFlagSet.BoolVar(&noconfirm, "y", false, "no confirmation");
+    modelFlagSet.BoolVar(&noconfirm, "noconfirm", false, "no confirmation");
     
     if len(os.Args) < 2 {
         flag.Usage();

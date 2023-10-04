@@ -173,22 +173,38 @@ func CreateProjectCurrentDir(projectName string, noconfirm bool) {
 }
 
 func bootstrapGoProject(projectName string, noconfirm bool) (string, error) {
+    var err error
     
     fmt.Println("Creating a new Golang project")
-    os.Mkdir(projectName, 0755)
-    os.Chdir(projectName) 
-    os.Mkdir("src", 0755)
-    os.Create("go.mod")
-    os.OpenFile("go.mod", os.O_RDWR, 0644)
+    err = os.Mkdir(projectName, 0755)
+    if err != nil {
+        err = fmt.Errorf("Error creating project directory\nInternal Error -> " + err.Error())
+        return "", err 
+    }
+    err = os.Chdir(projectName)
+    if err != nil { 
+        err = fmt.Errorf("Error changing directory to project directory\nInternal Error -> " + err.Error())
+        return "", err 
+    }
+    err = os.Mkdir("src", 0755)
+    if err != nil { 
+        err = fmt.Errorf("Error creating src directory\nInternal Error -> " + err.Error())
+        return "", err 
+    }
 
     cmd := exec.Command("go", "version")
-    output, err := cmd.CombinedOutput()
+    _, err = cmd.CombinedOutput()
     if err != nil {
         err = fmt.Errorf("\033[0;31mGolang is not installed\033[0m\nInternal Error ->" + err.Error())
         return "", err
     }
-    goVersion := string(output)
-    os.WriteFile("go.mod", []byte("module " + projectName + "\n\ngo " + goVersion), 0644)
+    cmd = exec.Command("go", "mod", "init", projectName)
+    output, err := cmd.CombinedOutput()
+    fmt.Println(string(output))
+    if err != nil {
+        err = fmt.Errorf("\033[0;31mError creating go.mod\033[0m\nInternal Error -> " + err.Error())
+        return "", err
+    }
 
     cmd = exec.Command("go", "get", "-u", "github.com/gin-gonic/gin")
     fmt.Println("Installing \033[0;36mGin\033[0m of the GHST framework")

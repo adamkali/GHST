@@ -57,7 +57,7 @@ go install github.com/adamkali/ghost
 `ghost` is made to work as a wrapper for these utilities. To start:
 
 ```bash
-ghost new 
+ghost new <project name> 
 ```
 
 
