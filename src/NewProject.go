@@ -14,7 +14,7 @@ const (
     TAILWINDCSSNAME = "static/styles/output.css"
     INPUTCSSNAME = "input.css"
     TAILWINDCSSCDNNAME = "<script src='https://cdn.tailwindcss.com'></script>"
-    STEPTOTAL = 7
+    STEPTOTAL = 9
 )
 
 var (
@@ -37,7 +37,7 @@ func ShowStep(stepMessage string) {
 }
 
 func ErrOut(err error) {
-    fmt.Println("🛑\t\t\033[0;31m" + err.Error() + "\033[0m")
+    fmt.Println("🛑\t\033[0;31m" + err.Error() + "\033[0m")
     os.Exit(1)
 }
 
@@ -104,12 +104,11 @@ func CreateProject(projectName string, projectPath string, noconfirm bool) {
     } else {
         ShowStep(signal)
     }
-
-    fmt.Println("🎉\t\t\033[0;32mProject created successfully\033[0m")
+    fmt.Println("🎉\t\033[0;32mProject created successfully\033[0m")
 }
 
 func CreateProjectCurrentDir(projectName string, noconfirm bool) {
-    fmt.Println("Creating project: " + projectName + " at current directory")
+    fmt.Println("Creating project: " + projectName + " in the current directory")
 
     var err error 
     var signal string 
@@ -117,7 +116,7 @@ func CreateProjectCurrentDir(projectName string, noconfirm bool) {
 
     ShowStep("Created project: ./" + projectName)
 
-    signal, err = bootstrapGoProject(".", noconfirm)
+    signal, err = bootstrapGoProject(projectName, noconfirm)
     if err != nil {
         ErrOut(err)
     } else {
@@ -169,18 +168,17 @@ func CreateProjectCurrentDir(projectName string, noconfirm bool) {
         ShowStep(signal)
     }
 
-    fmt.Println("🎉\t\t\033[0;32mProject created successfully\033[0m")
+    fmt.Println("🎉\t\033[0;32mProject created successfully\033[0m")
 }
 
 func bootstrapGoProject(projectName string, noconfirm bool) (string, error) {
     var err error
-    
-    fmt.Println("Creating a new Golang project")
     err = os.Mkdir(projectName, 0755)
     if err != nil {
         err = fmt.Errorf("Error creating project directory\nInternal Error -> " + err.Error())
         return "", err 
     }
+    fmt.Println("Changing directory to project directory" + projectName)
     err = os.Chdir(projectName)
     if err != nil { 
         err = fmt.Errorf("Error changing directory to project directory\nInternal Error -> " + err.Error())
@@ -234,9 +232,6 @@ func bootstrapGoProject(projectName string, noconfirm bool) (string, error) {
 }
 
 func bootsrapStaticFolder() (string, error) {
-    // crate a static folder 
-    fmt.Println("Creating a static folder 📁")
-
     err := os.Mkdir("static", 0755)
     if err != nil { 
         err = fmt.Errorf("Error creating static folder\nInternal Error -> " + err.Error())
@@ -271,7 +266,6 @@ func bootsrapStaticFolder() (string, error) {
 }
 
 func getHTMX() (string, error) {
-    fmt.Println("Downloading \033[0;35mHTMX\033[0m of the GHST framework")
     url := "https://unpkg.com/htmx.org@1.9.6" 
 
     response, err := http.Get(url)
@@ -280,13 +274,10 @@ func getHTMX() (string, error) {
         return "", err
     }
     defer response.Body.Close() 
-
     if response.StatusCode != http.StatusOK {
         err = fmt.Errorf("Error downloading HTMX\nStatus Code -> " + strconv.Itoa(response.StatusCode))
         return "", err
     }
-
-    // create the file 
     file, err := os.Create(HTMXNAME)
     if err != nil { 
         fmt.Println("\033[0;31mError downloading HTMX\033[0m\nInternal Error -> " + err.Error())
@@ -377,24 +368,20 @@ func bootstrapSurrealDB(noconfirm bool) (string, error) {
         fmt.Scanln(&input)
     }
     if input != "y" && input != "Y" && input != "" { 
-        return "GHST did not install SurrealDB", nil
+        return "GHST did not bootstrap SurrealDB", nil
     }
 
-    fmt.Println("Installing SurrealDB")
-    cmd := exec.Command("go", "get", "-u", "github.com/surrealdb/surrealdb")
-    output, err := cmd.CombinedOutput()
+    cmd := exec.Command("go", "get", "-u", "github.com/surrealdb/surrealdb.go")
+    _, err := cmd.CombinedOutput()
     if err != nil {
-        err = fmt.Errorf("Error installing SurrealDB\nInternal Error -> " + err.Error())
+        err = fmt.Errorf("Error bootstraping SurrealDB\nInternal Error -> " + err.Error())
         return "", err
     }
-    fmt.Println(string(output))
-    
     fmt.Println("SurrealDB is a database, so it needs to be managed.")
-    fmt.Println("GHST does not manage this in this version.")
+    fmt.Println("GHST does not manage SurrealDB in this version.")
     fmt.Println("Please follow the instructions at https://surrealdb.com/docs/introduction/start to manage SurrealDB")
     fmt.Println("Please also refer to the Golang SDK at https://surrealdb.com/docs/integration/sdks/golang")
     Project.SurrealDB = true
-
     return "\033[0;32mSurrealDB 🌌 installed\033[0m", nil
 }
 
@@ -467,12 +454,7 @@ func main() {
 func bootstrapViewsFolder(noconfirm bool) (string, error) {
     fmt.Println("Bootsraping the views folder") 
     fmt.Println("Bootsraping the src/views/index.html file")
-    err := os.Mkdir("src", 0755)
-    if err != nil { 
-        err = fmt.Errorf("Error creating src folder\nInternal Error -> " + err.Error())
-        return "", err
-    }
-    err = os.Mkdir("src/views", 0755)
+    err := os.Mkdir("src/views", 0755)
     if err != nil { 
         err = fmt.Errorf("Error creating src/views folder\nInternal Error -> " + err.Error())
         return "", err
@@ -493,8 +475,10 @@ func bootstrapViewsFolder(noconfirm bool) (string, error) {
 <head>
     <meta charset="UTF-8">
     <title>` + Project.ProjectName + `</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n` + Project.Css + 
-    "\n" + Project.Htmx +
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    ` + Project.Css + 
+    `
+    ` + Project.Htmx +
     `
 </head>
 <body class="flex flex-1 bg-slate-700 text-fuchsia-500">
@@ -525,5 +509,5 @@ func bootstrapRoutesAndModelsFolders(noconfirm bool) (string, error) {
         err = fmt.Errorf("Error creating src/models folder\nInternal Error -> " + err.Error())
         return "", err
     }
-    return "Created src/routes and src/models", nil
+    return "\033[0;32mroutes and models folders 📁 bootstrapped\033[0m", nil
 }
