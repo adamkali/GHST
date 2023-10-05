@@ -2,15 +2,14 @@
 **GHST stack (Gin - HTMX - SurrealDB - and Tailwindcss)** is a BLAZINGLY fast framework that sends down minimal JavaScript to the client.
 
 ```
-        ,.,
-     /"    "\
-    /  O   O \
- \""     o    ""/    
-  `"_          /    
+       _,.,
+     /'    '\
+    / ()  () \
+ \""          ""/    
+  '-_    o     /    
     |        ./
-  ,"______,-"
+  ,;______,-'
 ```
-
 
 ## Overview
 
@@ -59,5 +58,24 @@ go install github.com/adamkali/ghost
 ```bash
 ghost new <project name> 
 ```
+
+## Commands 
+The following is a combined list of commands which ghost uses:
+```bash
+# To create a new project
+ghost new <project name>
+
+# Run that project
+ghost run
+
+# Build the production project
+ghost build
+
+# To checkhealth
+ghost checkhealth
+```
+
+Use `-h` on any command in to see the entire list of options or `ghost help` for
+more top level information 
 
 
