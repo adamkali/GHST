@@ -77,8 +77,8 @@ ghost checkhealth
 Use `-h` on any command in to see the entire list of options or `ghost help` for more top level information.
 
 ## Powered By: 
-<img src="https://raw.githubusercontent.com/gin-gonic/logo/eecb3150aa7ce5a77b97fd834276b2b6958eaa9d/color.svg" width=32 height=32></img>
-<img src="https://tailwindcss.com/_next/static/media/tailwindcss-mark.3c5441fc7a190fb1800d4a5c7f07ba4b1345a9c8.svg" width=32 height=32></img>
-<img src="https://surrealdb.com/static/img/assets/icon/icon-3fccfc517c1fa85d61441f736f7bb6ac.svg" width=32 height=32></img>
+<img src="https://raw.githubusercontent.com/gin-gonic/logo/eecb3150aa7ce5a77b97fd834276b2b6958eaa9d/color.svg" width=64 height=64></img>
+<img src="https://tailwindcss.com/_next/static/media/tailwindcss-mark.3c5441fc7a190fb1800d4a5c7f07ba4b1345a9c8.svg" width=64 height=64></img>
+<img src="https://surrealdb.com/static/img/assets/icon/icon-3fccfc517c1fa85d61441f736f7bb6ac.svg" width=64 height=64></img>
 
 
