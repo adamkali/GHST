@@ -381,7 +381,7 @@ module.exports = {
     }
     
     // create the input.css file 
-    file, err := os.Create(INPUTCSSNAME)
+    file, err = os.Create(INPUTCSSNAME)
     if err != nil { 
         err = fmt.Errorf("Error creating input.css\nInternal Error -> " + err.Error()) 
         return "", err
