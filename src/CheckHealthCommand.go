@@ -2,6 +2,7 @@ package src
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
 )
 
@@ -35,7 +36,7 @@ func RunCheckHealth() {
         }
     }()
     go func() {
-        cmd := exec.Command("tailwindcss", "help")
+        cmd := exec.Command("tailwindcss", "-h")
         err := cmd.Run()
         if err != nil {
             tasks[1].Fail(err)
@@ -48,7 +49,7 @@ func RunCheckHealth() {
         err := cmd.Run()
         if err != nil {
             tasks[0].State = "🛑"
-            tasks[0].Name = "Could not connect, if you are using docker, or a cloud servicte url it is possible to regard this message"
+            tasks[0].Name = "Could not connect, if you are using docker, or a cloud service url it is possible to disregard this message"
             tasks[0].Progress()
         } else {
             tasks[0].Complete()
@@ -61,4 +62,6 @@ func RunCheckHealth() {
             continue
         }
     }
+    fmt.Println("Done!")
+    os.Exit(0)
 }

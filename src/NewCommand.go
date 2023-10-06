@@ -359,10 +359,24 @@ func getHTMX() (string, error) {
 }
 
 func getTailwindCSS(noconfirm bool) (string, error) {
-    cmd := exec.Command("tailwindcss", "init")
-    _, err := cmd.CombinedOutput()
-    if err != nil { 
-        err = fmt.Errorf("Error bootstraping TailwindCSS\nInternal Error -> " + err.Error()) 
+    // create the tailwind.config.js file 
+    file, err := os.Create("./tailwind.config.js")
+    if err != nil {
+        err = fmt.Errorf("Error creating tailwind.config.js\nInternal Error -> " + err.Error())
+        return "", err
+    }
+    defer file.Close()
+    _, err = file.WriteString(`
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [ './src/**/*.html', ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+}`)
+    if err != nil {
+        err = fmt.Errorf("Error writing to tailwind.config.js\nInternal Error -> " + err.Error())
         return "", err
     }
     
@@ -410,6 +424,12 @@ func bootstrapSurrealDB(noconfirm bool) (string, error) {
 }
 
 func bootsrapMainFile(noconfirm bool) (string, error) {
+    cmd := exec.Command("go", "get", "-u", "github.com/adamkali/ghost-utils")
+    _, err := cmd.CombinedOutput()
+    if err != nil {
+        err = fmt.Errorf("Error bootstraping Ghost Utils\nInternal Error -> " + err.Error())
+        return "", err
+    }
     file, err := os.Create("main.go")
     if err != nil {
         err = fmt.Errorf("Error creating main.go\nInternal Error -> " + err.Error())
@@ -419,39 +439,44 @@ func bootsrapMainFile(noconfirm bool) (string, error) {
 
     // write to the main.go file 
     _, err = file.WriteString(`
-package main 
+package main
 
-import ( 
-    "github.com/gin-gonic/gin" 
-    "github.com/surrealdb/surrealdb.go"
+import (
+	"fmt"
+
+	ghostutils "github.com/adamkali/ghost-utils/pkg/ghost-utils"
+	"github.com/gin-gonic/gin"
 )
 
 func main() { 
-    /* GIN */
+    /* GHOST-UTILS */
+    // load ghost config from the root of the project
+    conf, err := ghostutils.New()
+    if err != nil {
+        panic(err)
+    }
+
+    // create a new gin engine
     r := gin.Default()
-    r.LoadHTMLGlob("src/views/*")
-    r.Static("/static", "./static")
 
-    /* SURREALDB */
-    db, err := surrealdb.New(ws://localhost:8000/rpc)
-    if err != nil { 
+    // do basic setup with your config
+    db, err := conf.Setup(r)
+    if err != nil {
         panic(err)
     }
-    if _, err = db.SignIn(map[string]interface{}{
-        "username": "CHANGE_ME",
-        "password": "CHANGE_ME",
-    }); err != nil {
-        panic(err)
-    }
-    if _, err = db.Use("CHANGE_ME", "CHANGE_ME"); err != nil {
-        panic(err)
-    }
-
-    /* ROUTES */
-    r.GET("/", func(c *gin.Context) {
+   
+    // create a new basic route
+    // it is suggested to make a controller with 
+    // *surrealdb.DB as a field and use it in the
+    // controller methods
+    var basicRoute ghostutils.BasicRoute
+    index := basicRoute.New("/", db)
+    index.RG().GET("/", func(c *gin.Context) {
         c.HTML(200, "index.html", gin.H{})
     })
-    r.Run(":8080")
+
+    // run the server on your config's port :)
+    r.Run(fmt.Sprintf(":%d", conf.Port))
 }
     `)
     if err != nil {
@@ -459,7 +484,7 @@ func main() {
         return "", err
     }
 
-    return "\033[0;32mmain.go bootstrapped\033[0m", nil
+    return "\033[0;32m main.go bootstrapped\033[0m", nil
 }
 
 func bootstrapViewsFolder(noconfirm bool) (string, error) {

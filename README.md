@@ -46,6 +46,9 @@ Ghost does not yet manage your installation of SurrealDB. So you need to have an
 surreal help
 ```
 
+### Checkhealth 
+As well as the methods above: you can use Ghost's `ghost checkhealth` command to check the status of all three of these at once.
+
 ## Installation 
 You can use `go install` to download the installation: 
 ```bash
@@ -59,6 +62,32 @@ go install github.com/adamkali/ghost
 ghost new <project name> 
 ```
 
+There should be a genterated `./ghost.yaml` file at the top level of the project. It will look something like this: 
+```yaml
+
+# This is the configuration file for a ghost project 
+ghost: 
+  name: test
+  version: 0.0.1
+  description: A GHST project made with ghost
+  port: 8080
+  surrealdb:
+    # the following is url for the SurrealDB database 
+    # ensure that if you are using a remote database, that you 
+    # have the correct url.
+    surrealdb-url: ws://localhost:8000/rpc
+    # the following are the credentials for the SurrealDB database 
+    # that will be used for this project
+    surrealdb-username: CHANGE_ME
+    surrealdb-password: CHANGE_ME
+    surrealdb-database: CHANGE_ME
+    surrealdb-collection: CHANGE_ME
+  tailwindcss: 
+    input: ./input.css
+    output: ./static/styles/output.css
+```
+if you feel the need to change these values
+
 ## Commands 
 The following is a combined list of commands which ghost uses:
 ```bash
@@ -71,14 +100,17 @@ ghost run
 # Build the production project
 ghost build
 
+# Initialize Tailwindcss 
+ghost tw-init
+
 # To checkhealth
 ghost checkhealth
 ```
 Use `-h` on any command in to see the entire list of options or `ghost help` for more top level information.
 
 ## Powered By: 
-<img src="https://raw.githubusercontent.com/gin-gonic/logo/eecb3150aa7ce5a77b97fd834276b2b6958eaa9d/color.svg" width=64 height=64></img>
-<img src="https://tailwindcss.com/_next/static/media/tailwindcss-mark.3c5441fc7a190fb1800d4a5c7f07ba4b1345a9c8.svg" width=64 height=64></img>
-<img src="https://surrealdb.com/static/img/assets/icon/icon-3fccfc517c1fa85d61441f736f7bb6ac.svg" width=64 height=64></img>
+<img src="https://raw.githubusercontent.com/gin-gonic/logo/eecb3150aa7ce5a77b97fd834276b2b6958eaa9d/color.svg" width=128 height=128></img>
+<img src="https://tailwindcss.com/_next/static/media/tailwindcss-mark.3c5441fc7a190fb1800d4a5c7f07ba4b1345a9c8.svg" width=128 height=128></img>
+<img src="https://surrealdb.com/static/img/assets/icon/icon-3fccfc517c1fa85d61441f736f7bb6ac.svg" width=128 height=128></img>
 
 
