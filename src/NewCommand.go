@@ -424,7 +424,7 @@ func bootstrapSurrealDB(noconfirm bool) (string, error) {
 }
 
 func bootsrapMainFile(noconfirm bool) (string, error) {
-    cmd := exec.Command("go", "get", "-u", "github.com/adamkali/ghost-utils")
+    cmd := exec.Command("go", "get", "-u", "github.com/adamkali/ghost_utils")
     _, err := cmd.CombinedOutput()
     if err != nil {
         err = fmt.Errorf("Error bootstraping Ghost Utils\nInternal Error -> " + err.Error())
@@ -444,7 +444,7 @@ package main
 import (
 	"fmt"
 
-	ghostutils "github.com/adamkali/ghost-utils/pkg/ghost-utils"
+	ghostutils "github.com/adamkali/ghost-utils/pkg/ghost_utils"
 	"github.com/gin-gonic/gin"
 )
 
